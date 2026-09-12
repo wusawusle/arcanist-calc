@@ -476,7 +476,9 @@ describe('exchange upgrades use the current wiki costs', () => {
 
     for (const [id, [resource, total]] of Object.entries(expected)) {
       const row = fresh.rows.exchange.find((candidate) => candidate.id === id)!;
-      expect(row.total[resource as keyof typeof row.total], `${id} total`).toBeCloseTo(total, 5);
+      const actual = Number(row.total[resource as keyof typeof row.total]);
+      const relativeError = Math.abs(actual - total) / Math.max(1, Math.abs(total));
+      expect(relativeError, `${id} total relative error`).toBeLessThan(1e-12);
     }
   });
 
