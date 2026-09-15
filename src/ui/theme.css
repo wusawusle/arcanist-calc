@@ -1,0 +1,189 @@
+/*
+ * Palette is taken from the system's own materials rather than invented:
+ * the three rune types (ash, brine, chasm) are the accent trio, and the three
+ * essence tiers escalate pale -> teal -> rose in step with their difficulty.
+ * Orb colours are literal — the game calls them White/Green/Purple/Orange/Red,
+ * so a cost column can be scanned without reading it.
+ */
+
+/*
+ * Inter and JetBrains Mono, at 500 rather than 400 for body text.
+ *
+ * IBM Plex Sans is a handsome face with a small x-height and thin strokes, and
+ * at the sizes this UI uses it read as faint. Inter is drawn for screen UI —
+ * tall x-height, open apertures, no stroke thinning at small sizes — and is one
+ * of the most widely used interface faces there is, so it is familiar as well as
+ * legible. Medium is the body weight here; regular is reserved for nothing.
+ *
+ * Latin subsets only — the UI has no non-latin copy, and the full set ships
+ * cyrillic/greek/vietnamese faces nobody here will load.
+ */
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-700.css';
+@import '@fontsource/jetbrains-mono/latin-400.css';
+@import '@fontsource/jetbrains-mono/latin-500.css';
+@import '@fontsource/jetbrains-mono/latin-600.css';
+@import '@fontsource/jetbrains-mono/latin-700.css';
+
+:root {
+  --void: #0a0d13;
+  --stratum: #131822;
+  --stratum-2: #191f2a;
+  --seam: #232c38;
+  --seam-bright: #35424f;
+
+  /* Dim and faint were set for a lighter face; Inter at 500 needs less help,
+     but the old values were already under 4.5:1 on --stratum, so they come up
+     rather than down. Faint is now the lightest tone used for real words. */
+  --text: #eef1f7;
+  --text-dim: #b3bccb;
+  --text-faint: #8894a6;
+
+  --ash: #d8cba6;
+  --brine: #46c8b8;
+  --chasm: #9179e6;
+  --ember: #e2664b;
+  --gold: #e6b655;
+
+  --soft: #8fb8d8;
+  --dense: #5bc9a8;
+  --jagged: #c86fa8;
+
+  --res-whiteOrb: #e8ecf2;
+  --res-greenOrb: #62c97a;
+  --res-purpleOrb: #a97be0;
+  --res-orangeOrb: #e89a4c;
+  --res-redOrb: #e05a5a;
+  --res-ashRune: #d8cba6;
+  --res-brineRune: #46c8b8;
+  --res-chasmRune: #9179e6;
+  --res-softEssence: #8fb8d8;
+  --res-denseEssence: #5bc9a8;
+  --res-stoneVein: #a8a29a;
+  --res-scorpioStar: #e6c555;
+  --res-lynxStar: #e6c555;
+  --res-aquariusStar: #e6c555;
+  --res-superstars: #f0d97a;
+  --res-prestigePoints: #d88fc0;
+  --res-blueCow: #6fa8e0;
+
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, Menlo, monospace;
+
+  /*
+   * One ramp, used everywhere. Every size in the app comes from this list so
+   * the whole page can be made larger or smaller from five lines.
+   *
+   * --micro is the floor: it is only ever used for uppercase letterspaced mono
+   * labels, which need more size than lowercase prose to read at a glance.
+   */
+  --fs-micro: 11.5px;
+  --fs-tiny: 12.5px;
+  --fs-small: 13.5px;
+  --fs-body: 15px;
+  --fs-lead: 17px;
+
+  /* Body copy sits at medium; regular is too light on a dark background. */
+  --w-body: 500;
+  --w-strong: 600;
+
+  --r: 4px;
+  --gap: 20px;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--void);
+}
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: var(--fs-body);
+  font-weight: var(--w-body);
+  line-height: 1.55;
+  color: var(--text);
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(145, 121, 230, 0.09), transparent 65%),
+    radial-gradient(760px 420px at 92% 4%, rgba(70, 200, 184, 0.06), transparent 62%),
+    var(--void);
+  background-attachment: fixed;
+  /* No `-webkit-font-smoothing: antialiased` — it thins strokes on macOS, which
+     is the opposite of what light-on-dark text needs. */
+}
+
+/* All numerals are mono and tabular so columns line up down the page. */
+.num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'zero' 1;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/*
+ * `manipulation` drops the browser's wait-for-a-second-tap before dispatching a
+ * click. Nothing here responds to a double tap, and the controls that get tapped
+ * repeatedly are the level steppers, which is exactly where a 300ms stall reads
+ * as the app being broken.
+ *
+ * The tap highlight is set rather than removed: the default is a blue-grey wash
+ * picked for light pages, and it lands badly on this palette. Press feedback on
+ * touch matters more than on a mouse, where hover has already confirmed the
+ * target, so it is tinted to the accent instead of turned off.
+ */
+button,
+input,
+select,
+summary,
+label,
+.ledger-pick {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: color-mix(in srgb, var(--brine) 18%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brine);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/*
+ * Available to a screen reader, not to the eye. Used for table headers on the
+ * altar grids, where the columns are obvious from the surrounding layout but
+ * unlabelled to anyone who cannot see it.
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
